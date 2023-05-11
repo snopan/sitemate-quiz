@@ -142,7 +142,7 @@ const deleteIssue = async () => {
         validate: value => !value || value < 0 ? "Please provide a valid id number" : true
     })
 
-    const response = await axios.delete(`http://localhost:${serverPort}/issues/delete/${id}`)
+    const response = await axios.delete(`http://localhost:${serverPort}/issues/${id}`)
 }
 
 ( async () => askAction() )()
