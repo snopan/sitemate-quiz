@@ -15,7 +15,7 @@ const port = 3000
 const issues = {}
 
 // This function checks whether the given id is for a valid issue within all issues
-const isValidIssue = (issues, id) => Object.keys(issues).includes(id)
+const isValidIssue = (issues, id) => Object.keys(issues).includes(`${id}`)
 
 // This function retireves the issue and formats it to what return needs to be
 // this does not cover if the given issue id doesn't exist, it should be checked before
@@ -36,12 +36,12 @@ app.get("/issues", (req, res) => {
 
 // Get an issue by id
 app.get("/issues/:id", (req, res) => {
-    const id = req.id
+    const id = req.params.id
 
     // When the given issue id doesn't exist
-    // if (!isValidIssue(issues, id)) {
-    //     res.status(404)
-    // }
+    if (!isValidIssue(issues, id)) {
+        res.status(400).send("The provided issue id does not exist")
+    }
 
     res.json(getFormattedIssue(issues, id))
 })
@@ -51,9 +51,9 @@ app.post("/issues", (req, res) => {
     const { id, title, description } = req.body
 
     // Issue already exists
-    // if (isValidIssue(issues, id)) {
-    //     res.status(404)
-    // }
+    if (isValidIssue(issues, id)) {
+        res.status(400).send("Another issue already exist with the same id")
+    }
 
     issues[id] = { title, description }
     res.status(200).send()
@@ -64,28 +64,27 @@ app.put("/issues", (req, res) => {
     const { id, title: newTitle, description: newDescription } = req.body
 
     // When the given issue id doesn't exist
-    // if (!isValidIssue(issues, id)) {
-    //     res.status(404)
-    // }
+    if (!isValidIssue(issues, id)) {
+        res.status(400).send("The provided issue id does not exist")
+    }
 
     const issue = issues[id]
     issues[id] = {
         title: newTitle ? newTitle : issue.title,
         description: newDescription ? newDescription : issue.description
     }
-    res.status(200).send()
+    res.json(getFormattedIssue(issues, id))
 })
 
 // Delete an issue by id
 app.delete("/issues/:id", (req, res) => {
-    const id = req.id
+    const id = req.params.id
 
     // When the given issue id doesn't exist
-    // if (!isValidIssue(issues, id)) {
-    //     res.status(404)
-    // }
+    if (!isValidIssue(issues, id)) {
+        res.status(400).send("The provided issue id does not exist")
+    }
     
-    console.log(id)
     delete issues[id]
     res.status(200).send()
 })

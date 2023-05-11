@@ -64,7 +64,8 @@ const askReadAction = async () => {
 
 const readAllIssue = async () => {
     const { data } = await axios.get(`http://localhost:${serverPort}/issues`)
-    console.log(data.issues)
+        console.log("Here are all existing issues")
+        console.log(data.issues)
 }
 
 const readSingleIssue = async () => {
@@ -75,8 +76,13 @@ const readSingleIssue = async () => {
         validate: value => !value || value < 0 ? "Please provide a valid id number" : true
     })
 
-    const { data } = await axios.get(`http://localhost:${serverPort}/issues/${id}`)
-    console.log(data)
+    try {
+        const { data } = await axios.get(`http://localhost:${serverPort}/issues/${id}`)
+        console.log(`Here is issue ${id}`)
+        console.log(data)
+    } catch (error) {
+        console.log(error.response.data)
+    }
 }
 
 const createIssue = async () => {
@@ -101,11 +107,12 @@ const createIssue = async () => {
         }
     ])
 
-    const response = await axios.post(
-        `http://localhost:${serverPort}/issues`, 
-        { id, title, description }
-    )
-    // The issue may already exist
+    try {
+        await axios.post(`http://localhost:${serverPort}/issues`, { id, title, description })
+        console.log(`Issue ${id} has been created`)
+    } catch (error) {
+        console.log(error.response.data)
+    }
 }
 
 const updateIssue = async () => {
@@ -128,10 +135,13 @@ const updateIssue = async () => {
         }
     ])
 
-    const response = await axios.put(
-        `http://localhost:${serverPort}/issues`, 
-        { id, title, description }
-    )
+    try {
+        const { data } = await axios.put(`http://localhost:${serverPort}/issues`, { id, title, description })
+        console.log(`Issue ${id} has been updated to`)
+        console.log(data)
+    } catch (error) {
+        console.log(error.response.data)
+    }
 }
 
 const deleteIssue = async () => {
@@ -142,7 +152,12 @@ const deleteIssue = async () => {
         validate: value => !value || value < 0 ? "Please provide a valid id number" : true
     })
 
-    const response = await axios.delete(`http://localhost:${serverPort}/issues/${id}`)
+    try {
+        await axios.delete(`http://localhost:${serverPort}/issues/${id}`)
+        console.log(`Issue ${id} has been deleted`)
+    } catch (error) {
+        console.log(error.response.data)
+    }
 }
 
 ( async () => askAction() )()
